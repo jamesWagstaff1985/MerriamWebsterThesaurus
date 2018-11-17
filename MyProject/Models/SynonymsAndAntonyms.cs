@@ -8,7 +8,7 @@ namespace MyProject.Models
 {
     public class SynonymsAndAntonyms
     {
-        private string key = "b03a953f-cb43-40fd-9c3b-7cc8dbbe328e";
+        private string key = "*****API KEY*******";
         public string query { get; set; }
 
         public (string, string) GetAssociatedWords()
