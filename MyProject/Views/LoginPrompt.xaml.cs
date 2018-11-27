@@ -1,4 +1,5 @@
-﻿using MyProject.ViewModels;
+﻿using MyProject.Models;
+using MyProject.ViewModels;
 using ReactiveUI;
 using System.Reactive.Disposables;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace MyProject.Views
 
             InitializeComponent();
 
-            ViewModel = new LoginPromptViewModel();
+            ViewModel = new LoginPromptViewModel(new UserDbContext());
             //Set the binding
             this.WhenActivated(disposable =>
             {

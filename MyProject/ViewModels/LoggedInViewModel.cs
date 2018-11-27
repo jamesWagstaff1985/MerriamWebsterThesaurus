@@ -10,6 +10,7 @@ namespace MyProject.ViewModels
         private string _word;
         private string _synonyms;
         private string _antonyms;
+        private SynonymsAndAntonyms _synonymsAndAntonyms;
 
         public string Word
         {
@@ -29,19 +30,21 @@ namespace MyProject.ViewModels
             set { this.RaiseAndSetIfChanged(ref _antonyms, value); }
         }
 
-        public LoggedInViewModel()
+        public LoggedInViewModel(SynonymsAndAntonyms synonymsAndAntonyms)
         {
+            _synonymsAndAntonyms = synonymsAndAntonyms;
+
             this.WhenAnyValue(x => x.Word)
-                .Where(x => !String.IsNullOrWhiteSpace(x) && x.Length > 2)
+                .Where(x => !string.IsNullOrWhiteSpace(x) && x.Length > 2)
                 .Throttle(TimeSpan.FromMilliseconds(800), RxApp.MainThreadScheduler)
                 .Subscribe(_ => CheckWord());
         }
 
         private void CheckWord()
         {
-            if (!String.IsNullOrEmpty(Word))
+            if (!string.IsNullOrEmpty(Word))
             {
-                var Results = new SynonymsAndAntonyms { query = Word }.GetAssociatedWords();
+                var Results = _synonymsAndAntonyms.GetAssociatedWords(Word);
                 Synonyms = Results.Item1;
                 Antonyms = Results.Item2;
             }

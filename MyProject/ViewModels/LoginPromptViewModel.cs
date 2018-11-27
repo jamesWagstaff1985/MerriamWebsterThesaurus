@@ -4,6 +4,7 @@ using ReactiveUI;
 using System.Reactive;
 using System.Windows;
 using System.Threading;
+using MyProject.Models;
 
 namespace MyProject.ViewModels
 {
@@ -14,6 +15,7 @@ namespace MyProject.ViewModels
         public ReactiveCommand<Unit, Unit> DoLogin { get; }
         private string _message;
         private int MaxAttempts = 2;
+        private UserDbContext _context;
 
         public string Username
         {
@@ -43,15 +45,16 @@ namespace MyProject.ViewModels
             Environment.Exit(0);
         }
 
-        public LoginPromptViewModel()
+        public LoginPromptViewModel(UserDbContext context)
         {
+            _context = context;
+
             this.WhenAnyValue(x => x.Username, x => x.Password).Subscribe(_ => ClearMessage());
             DoLogin = ReactiveCommand.Create(
                 () =>
                 {
                     Models.UserDbContext Users = new Models.UserDbContext();
-                    var context = new Models.UserDbContext();
-                    if (context.Users.Any(c=>c.Username == Username && c.Password == Password))
+                    if (_context.Users.Any(c=>c.Username == Username && c.Password == Password))
                     {
                         ChangeView();
                     }

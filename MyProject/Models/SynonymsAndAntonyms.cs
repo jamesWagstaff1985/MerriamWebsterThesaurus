@@ -9,15 +9,22 @@ namespace MyProject.Models
     public class SynonymsAndAntonyms
     {
         private string key = "*****API KEY*******";
-        public string query { get; set; }
+        //public string Query { get; set; }
+        private StringBuilder _synonyms;
+        private StringBuilder _antonyms;
+        private JavaScriptSerializer _serializer;
 
-        public (string, string) GetAssociatedWords()
+        public (string, string) GetAssociatedWords(string Query)
         {
-            if (!string.IsNullOrWhiteSpace(query))
+                    _synonyms = new StringBuilder();
+                    _antonyms = new StringBuilder();
+                    _serializer = new JavaScriptSerializer();
+
+            if (!string.IsNullOrWhiteSpace(Query))
             {
                 try
                 {
-                    string UriToCall = String.Format("https://www.dictionaryapi.com/api/v3/references/ithesaurus/json/{0}?key={1}", query, key);
+                    string UriToCall = string.Format("https://www.dictionaryapi.com/api/v3/references/ithesaurus/json/{0}?key={1}", Query, key);
                     WebRequest request = WebRequest.Create(UriToCall);
 
                     HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -33,25 +40,22 @@ namespace MyProject.Models
                         reader.Close();
                     }
 
-                    JavaScriptSerializer serializer = new JavaScriptSerializer();
-                    dynamic item = serializer.Deserialize<object>(responseFromServer);
+                    dynamic item = _serializer.Deserialize<object>(responseFromServer);
 
-                    StringBuilder Synonyms = new StringBuilder();
                     foreach (var syn in item[0]["meta"]["syns"][0])
                     {
-                        Synonyms.Append(String.Format("{0}, ", syn));
+                        _synonyms.Append(string.Format("{0}, ", syn));
                     }
 
-                    StringBuilder Antonyms = new StringBuilder();
                     foreach (var ant in item[0]["meta"]["ants"][0])
                     {
-                        Antonyms.Append(String.Format("{0}, ", ant));
+                        _antonyms.Append(string.Format("{0}, ", ant));
                     }
-                    return (Synonyms.ToString(), Antonyms.ToString());
+                    return (_synonyms.ToString().Remove(_synonyms.Length - 2, 2), _antonyms.ToString().Remove(_antonyms.Length - 2, 2));
                 }
                 catch (Exception)
                 {
-                    return ("", "");
+                    return ("No Synonyms were found", "No Antonyms were found");
                 }
             }
             else

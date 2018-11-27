@@ -2,6 +2,7 @@
 using System.Windows;
 using ReactiveUI;
 using System.Reactive.Disposables;
+using MyProject.Models;
 
 namespace MyProject.Views
 {
@@ -16,7 +17,7 @@ namespace MyProject.Views
             public LoggedInView()
             {
             InitializeComponent();
-            ViewModel = new LoggedInViewModel();
+            ViewModel = new LoggedInViewModel(new SynonymsAndAntonyms());
 
             this.WhenActivated(disposable =>
             {
